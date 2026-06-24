@@ -4,49 +4,15 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
 
-print("Generando Animación 3D v3 con Representación Dual de Numerales e Imágenes...")
+print("Generando Animación 3D v5 con estructura Z13 x Z4...")
 
-# 1. Escanear carpeta de imágenes para símbolos
-simbolos_dir = "imagenes/simbolos"
-simbolos_files = {}
-
-# Mapeo por defecto por si las imágenes no están accesibles
-nombres_simbolos_defecto = {
-    0: "flor", 1: "lagarto", 2: "viento", 3: "casa", 4: "lagartija",
-    5: "serpiente", 6: "muerte", 7: "venado", 8: "conejo", 9: "agua",
-    10: "perro", 11: "mono", 12: "hierba", 13: "carrizo", 14: "jaguar",
-    15: "aguila", 16: "zopilote", 17: "movimiento", 18: "pedernal", 19: "lluvia"
+# Mapeo fijo de imágenes de símbolos según r (1, 2, 3, 0)
+simbolos_info = {
+    1: {"name": "carrizo", "file": "13 - carrizo.png"},
+    2: {"name": "pedernal", "file": "18 - pedernal.png"},
+    3: {"name": "casa", "file": "3 - casa.png"},
+    0: {"name": "conejo", "file": "8 - conejo.png"}
 }
-
-if os.path.exists(simbolos_dir):
-    for filename in os.listdir(simbolos_dir):
-        if filename.endswith(".png"):
-            parts = filename.split("-")
-            if len(parts) >= 2:
-                try:
-                    r_val = int(parts[0].strip())
-                    simbolos_files[r_val] = filename
-                except ValueError:
-                    pass
-
-# Generar diccionario completo de mapeo de nombres y archivos de símbolos
-simbolos_info = {}
-for r in range(20):
-    filename = simbolos_files.get(r, "")
-    if filename:
-        parts = filename.split("-")
-        name = parts[1].replace(".png", "").strip()
-    else:
-        # Fallback si el archivo no existe
-        name = nombres_simbolos_defecto[r]
-        filename = f"{r} - {name}.png"
-        if r == 7:
-            filename = "7-venado.png"
-    
-    simbolos_info[r] = {
-        "file": filename,
-        "name": name
-    }
 
 # 2. Parámetros del Toro
 R_major = 5
@@ -54,16 +20,16 @@ r_minor = 1.5
 
 def mapear(x_mod, y_mod):
     v_ang = 2 * np.pi * (x_mod / 13.0)
-    u_ang = 2 * np.pi * (y_mod / 20.0)
+    u_ang = 2 * np.pi * (y_mod / 4.0)
     X = (R_major + r_minor * np.cos(u_ang)) * np.cos(v_ang)
     Y = (R_major + r_minor * np.cos(u_ang)) * np.sin(v_ang)
     Z = r_minor * np.sin(u_ang)
     return X, Y, Z
 
-# 3. Trayectoria para la animación (261 puntos para cerrar el lazo)
-n_vals = np.arange(1, 262)
+# 3. Trayectoria para la animación (53 puntos para cerrar el lazo en Z13 x Z4)
+n_vals = np.arange(1, 54)
 u_mod = n_vals % 13
-v_mod = n_vals % 20
+v_mod = n_vals % 4
 X_traj, Y_traj, Z_traj = mapear(u_mod, v_mod)
 
 fig = go.Figure()
@@ -85,7 +51,7 @@ fig.add_trace(go.Surface(
     name='Toro'
 ))
 
-# --- CLASIFICACIÓN DE LOS 260 PUNTOS Y RECOLECCIÓN DE DATOS ---
+# --- CLASIFICACIÓN DE LOS 52 PUNTOS Y RECOLECCIÓN DE DATOS ---
 categorías = {
     'base': {
         'x': [], 'y': [], 'z': [], 'n': [],
@@ -95,35 +61,35 @@ categorías = {
     'familia_q_1': {
         'x': [], 'y': [], 'z': [], 'n': [],
         'text_num': [], 'text_img': [], 'hover': [],
-        'color': '#00CEC9', 'symbol': 'circle', 'size': 8, 'name': 'Inicio de Veintena'
+        'color': '#00CEC9', 'symbol': 'circle', 'size': 8, 'name': 'Día en Círculo Principal (r=1, Carrizo)'
     },
     'tlahuiztlanpa': {
         'x': [], 'y': [], 'z': [], 'n': [],
         'text_num': [], 'text_img': [], 'hover': [],
-        'color': '#F1C40F', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de Trecena Tlahuiztlanpa'
+        'color': '#F1C40F', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de Trecena (r=1, Carrizo)'
     },
     'huitztlanpa': {
         'x': [], 'y': [], 'z': [], 'n': [],
         'text_num': [], 'text_img': [], 'hover': [],
-        'color': '#0984E3', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de Trecena Huitztlanpa'
+        'color': '#0984E3', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de Trecena (r=2, Pedernal)'
     },
     'cihuatlanpa': {
         'x': [], 'y': [], 'z': [], 'n': [],
         'text_num': [], 'text_img': [], 'hover': [],
-        'color': '#D63031', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de Trecena Cihuatlanpa'
+        'color': '#D63031', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de Trecena (r=3, Casa)'
     },
     'mictlanpa': {
         'x': [], 'y': [], 'z': [], 'n': [],
         'text_num': [], 'text_img': [], 'hover': [],
-        'color': '#7F8C8D', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de Trecena Mictlanpa'
+        'color': '#7F8C8D', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de Trecena (r=0, Conejo)'
     }
 }
 
 points_data = {}
 
-for n in range(1, 261):
+for n in range(1, 53):
     q = n % 13
-    r = n % 20
+    r = n % 4
     X, Y, Z = mapear(q, r)
     
     numeral = 13 if q == 0 else q
@@ -135,26 +101,22 @@ for n in range(1, 261):
     
     hover_info = f"Día n: <b>{n}</b><br>Coordenadas: <b>({q}, {r})</b>"
     
-    # Clasificación
     if q == 1:
-        if n in [1, 53, 105, 157, 209]:
+        if r == 1:
             class_key = 'tlahuiztlanpa'
-            class_name = 'Inicio de Trecena Tlahuiztlanpa'
-        elif n in [14, 66, 118, 170, 222]:
+            class_name = 'Inicio de Trecena (r=1, Carrizo)'
+        elif r == 2:
             class_key = 'huitztlanpa'
-            class_name = 'Inicio de Trecena Huitztlanpa'
-        elif n in [27, 79, 131, 183, 235]:
+            class_name = 'Inicio de Trecena (r=2, Pedernal)'
+        elif r == 3:
             class_key = 'cihuatlanpa'
-            class_name = 'Inicio de Trecena Cihuatlanpa'
-        elif n in [40, 92, 144, 196, 248]:
-            class_key = 'mictlanpa'
-            class_name = 'Inicio de Trecena Mictlanpa'
+            class_name = 'Inicio de Trecena (r=3, Casa)'
         else:
-            class_key = 'tlahuiztlanpa'
-            class_name = 'Inicio de Trecena Tlahuiztlanpa'
+            class_key = 'mictlanpa'
+            class_name = 'Inicio de Trecena (r=0, Conejo)'
     elif r == 1:
         class_key = 'familia_q_1'
-        class_name = 'Inicio de Veintena'
+        class_name = 'Día en Círculo Principal (r=1, Carrizo)'
     else:
         class_key = 'base'
         class_name = 'Día Regular'
@@ -185,33 +147,44 @@ for cat_key in trace_keys:
     
     fig.add_trace(go.Scatter3d(
         x=cat['x'], y=cat['y'], z=cat['z'],
-        mode='markers',  # Iniciamos limpio
+        mode='markers',
         marker=dict(
             size=cat['size'],
             color=cat['color'],
             symbol=cat['symbol'],
             line=line_dict
         ),
-        text=cat['text_num'],  # Por defecto numérico
+        text=cat['text_num'],
         textposition="top center",
         textfont=dict(color='#0F172A', size=11, family='Arial, sans-serif'),
         hovertext=cat['hover'],
         hoverinfo='text',
-        customdata=cat['n'],  # Almacena el número de día n
+        customdata=cat['n'],
         name=cat['name']
     ))
 
-# --- TRAZO 5: Rastro (Trail) animado ---
-fig.add_trace(go.Scatter3d(
-    x=[X_traj[0]], y=[Y_traj[0]], z=[Z_traj[0]],
-    mode='lines',
-    line=dict(color='yellow', width=4),
-    opacity=0.8,
-    name='Trayectoria',
-    hoverinfo='skip'
-))
+# --- TRAZOS 7 a 10: 4 Tramos de trayectoria de trecenas (Multicolor) ---
+colores_tramos = {
+    0: '#F1C40F', # Amarillo (r=1)
+    1: '#0984E3', # Azul (r=2)
+    2: '#D63031', # Rojo (r=3)
+    3: '#7F8C8D'  # Gris (r=0)
+}
 
-# --- TRAZO 6: Generador Activo (Tracer) animado ---
+# Añadir las 4 trazas para los 4 tramos
+for S in range(1, 5):
+    color_seg = colores_tramos[S-1]
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='lines',
+        line=dict(color=color_seg, width=4),
+        opacity=0.8,
+        name=f'Trecena {S}',
+        hoverinfo='skip',
+        showlegend=False
+    ))
+
+# --- TRAZO 11: Generador Activo (Tracer) animado ---
 fig.add_trace(go.Scatter3d(
     x=[X_traj[0]], y=[Y_traj[0]], z=[Z_traj[0]],
     mode='markers+text',
@@ -232,12 +205,36 @@ fig.add_trace(go.Scatter3d(
 frames = []
 for k in range(1, len(n_vals)):
     q = k % 13
-    r = k % 20
-    frame_data = [
-        go.Scatter3d(x=X_traj[:k], y=Y_traj[:k], z=Z_traj[:k]),
-        go.Scatter3d(x=[X_traj[k-1]], y=[Y_traj[k-1]], z=[Z_traj[k-1]], text=[f"({q},{r})"])
-    ]
-    frame = go.Frame(data=frame_data, traces=[7, 8], name=str(k))
+    r = k % 4
+    
+    # Preparar datos de trazas del frame (trazas 7 a 11)
+    frame_data_traces = []
+    
+    # 4 Segmentos
+    for S in range(1, 5):
+        idx_start = 13 * (S - 1)
+        idx_end = 13 * S
+        
+        if (k - 1) < idx_start:
+            x_seg, y_seg, z_seg = [], [], []
+        elif idx_start <= (k - 1) <= idx_end:
+            x_seg = X_traj[idx_start : k]
+            y_seg = Y_traj[idx_start : k]
+            z_seg = Z_traj[idx_start : k]
+        else:
+            x_seg = X_traj[idx_start : idx_end + 1]
+            y_seg = Y_traj[idx_start : idx_end + 1]
+            z_seg = Z_traj[idx_start : idx_end + 1]
+            
+        frame_data_traces.append(go.Scatter3d(x=list(x_seg), y=list(y_seg), z=list(z_seg)))
+        
+    # Generador Activo
+    frame_data_traces.append(go.Scatter3d(
+        x=[X_traj[k-1]], y=[Y_traj[k-1]], z=[Z_traj[k-1]],
+        text=[f"({q},{r})"]
+    ))
+    
+    frame = go.Frame(data=frame_data_traces, traces=list(range(7, 12)), name=str(k))
     frames.append(frame)
 
 fig.frames = frames
@@ -253,7 +250,7 @@ sliders = [dict(
 
 fig.update_layout(
     title=dict(
-        text='Tonalpohualli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₂₀',
+        text='Tonalpohualli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₄ (Trayectoria Multicolor)',
         font=dict(size=18, color='#0F172A', family='Arial'),
         x=0.5, y=0.95
     ),
@@ -306,7 +303,7 @@ html_template = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Tonalpohualli - Modelo Toro Interactivo 3D: Z13 ⊕ Z20</title>
+    <title>Tonalpohualli - Modelo Toro Interactivo 3D: Z13 ⊕ Z4</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -421,7 +418,7 @@ html_template = """<!DOCTYPE html>
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(0, 0, 0, 0.08);
         }
-        
+
         .control-btn {
             flex: 1;
             background: #2563EB;
@@ -691,14 +688,14 @@ html_template = """<!DOCTYPE html>
         <div id="sidebar">
             <h1 style="margin-bottom: 2px;">Tonalpohualli</h1>
             <h1 style="margin-top: 2px; margin-bottom: 5px;">Toro Interactivo 3D</h1>
-            <div class="subtitle">Modelo Z₁₃ ⊕ Z₂₀</div>
+            <div class="subtitle">Modelo Z₁₃ ⊕ Z₄</div>
             
             <div class="section-label" style="margin-top: 5px;">Representación</div>
             <div class="selector-container" style="margin-bottom: 15px;">
                 <button id="btn-numeros" class="selector-btn active" onclick="setRepresentation('numeros')">Números (q, r)</button>
                 <button id="btn-imagenes" class="selector-btn" onclick="setRepresentation('imagenes')">(Numeral, Glifo)</button>
             </div>
-
+ 
             <div class="section-label">Modo de Seguimiento</div>
             <div class="selector-container" style="margin-bottom: 20px;">
                 <button id="btn-seg-cursor" class="selector-btn active" onclick="setFollowMode('cursor')">Al Señalar</button>
@@ -752,7 +749,6 @@ html_template = """<!DOCTYPE html>
     </div>
     
     <script>
-        // Los datos del dataset y etiquetas se inyectan aquí por Python.
         const pointsData = {POINTS_DATA_JSON};
         const textNumeros = {TEXT_NUMEROS_JSON};
         const textImagenes = {TEXT_IMAGENES_JSON};
@@ -765,11 +761,9 @@ html_template = """<!DOCTYPE html>
             if (mode === currentRepresentation) return;
             currentRepresentation = mode;
             
-            // Actualizar botones de la UI
             document.getElementById('btn-numeros').classList.toggle('active', mode === 'numeros');
             document.getElementById('btn-imagenes').classList.toggle('active', mode === 'imagenes');
             
-            // Actualizar etiquetas en el gráfico Plotly
             const plotDiv = document.querySelector('.js-plotly-plot') || document.querySelector('.plotly-graph-div');
             if (plotDiv) {
                 const textArray = mode === 'numeros' ? textNumeros : textImagenes;
@@ -781,7 +775,6 @@ html_template = """<!DOCTYPE html>
                 }, [1, 2, 3, 4, 5, 6]);
             }
             
-            // Refrescar el panel lateral con la nueva visualización si hay un punto seleccionado
             if (hoveredDay !== null) {
                 updateSidebar(hoveredDay);
             }
@@ -791,17 +784,14 @@ html_template = """<!DOCTYPE html>
             if (mode === followMode) return;
             followMode = mode;
             
-            // Actualizar botones de la UI
             document.getElementById('btn-seg-cursor').classList.toggle('active', mode === 'cursor');
             document.getElementById('btn-seg-trayectoria').classList.toggle('active', mode === 'trayectoria');
             
-            // Si cambiamos a trayectoria y hay una animación activa o un slider, 
-            // actualizamos la barra derecha con el valor actual.
             if (mode === 'trayectoria') {
                 const plotDiv = document.querySelector('.js-plotly-plot') || document.querySelector('.plotly-graph-div');
                 if (plotDiv && plotDiv.layout && plotDiv.layout.sliders && plotDiv.layout.sliders[0]) {
                     const activeStep = plotDiv.layout.sliders[0].active || 0;
-                    const day = activeStep + 1; // n = activeStep + 1
+                    const day = activeStep + 1;
                     updateSidebar(day);
                 }
             }
@@ -814,7 +804,6 @@ html_template = """<!DOCTYPE html>
             currentSpeed = parseInt(val);
             document.getElementById('speed-val').innerText = currentSpeed;
             if (isPlaying) {
-                // Para aplicar la velocidad inmediatamente, pausamos y reanudamos
                 pauseAnimation();
                 playAnimation();
             }
@@ -891,7 +880,7 @@ html_template = """<!DOCTYPE html>
                         </div>
                         <div class="number-box">
                             <span class="val" style="color: #0E6251;">${data.r}</span>
-                            <span class="label">módulo 20</span>
+                            <span class="label">módulo 4</span>
                         </div>
                     </div>
                 `;
@@ -981,7 +970,7 @@ html_content = html_content.replace("{TEXT_NUMEROS_JSON}", json.dumps(text_numer
 html_content = html_content.replace("{TEXT_IMAGENES_JSON}", json.dumps(text_imagenes_js))
 
 # Guardar a archivo HTML
-with open("toro_animacion_3d_v3.6.html", "w", encoding="utf-8") as f:
+with open("toro_animacion_3d_v5.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("¡toro_animacion_3d_v3.6.html creado exitosamente!")
+print("¡toro_animacion_3d_v5.html creado exitosamente!")

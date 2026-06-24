@@ -4,7 +4,7 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
 
-print("Generando Animación 3D v3 con Representación Dual de Numerales e Imágenes...")
+print("Generando Animación 3D v4 con Trayectoria Multicolor y Representación Dual...")
 
 # 1. Escanear carpeta de imágenes para símbolos
 simbolos_dir = "imagenes/simbolos"
@@ -37,7 +37,6 @@ for r in range(20):
         parts = filename.split("-")
         name = parts[1].replace(".png", "").strip()
     else:
-        # Fallback si el archivo no existe
         name = nombres_simbolos_defecto[r]
         filename = f"{r} - {name}.png"
         if r == 7:
@@ -135,7 +134,6 @@ for n in range(1, 261):
     
     hover_info = f"Día n: <b>{n}</b><br>Coordenadas: <b>({q}, {r})</b>"
     
-    # Clasificación
     if q == 1:
         if n in [1, 53, 105, 157, 209]:
             class_key = 'tlahuiztlanpa'
@@ -185,33 +183,45 @@ for cat_key in trace_keys:
     
     fig.add_trace(go.Scatter3d(
         x=cat['x'], y=cat['y'], z=cat['z'],
-        mode='markers',  # Iniciamos limpio
+        mode='markers',
         marker=dict(
             size=cat['size'],
             color=cat['color'],
             symbol=cat['symbol'],
             line=line_dict
         ),
-        text=cat['text_num'],  # Por defecto numérico
+        text=cat['text_num'],
         textposition="top center",
         textfont=dict(color='#0F172A', size=11, family='Arial, sans-serif'),
         hovertext=cat['hover'],
         hoverinfo='text',
-        customdata=cat['n'],  # Almacena el número de día n
+        customdata=cat['n'],
         name=cat['name']
     ))
 
-# --- TRAZO 5: Rastro (Trail) animado ---
-fig.add_trace(go.Scatter3d(
-    x=[X_traj[0]], y=[Y_traj[0]], z=[Z_traj[0]],
-    mode='lines',
-    line=dict(color='yellow', width=4),
-    opacity=0.8,
-    name='Trayectoria',
-    hoverinfo='skip'
-))
+# --- TRAZOS 7 a 26: 20 Tramos de trayectoria de trecenas (Multicolor) ---
+colores_tramos = {
+    0: '#F1C40F', # Amarillo (tlahuiztlanpa)
+    1: '#0984E3', # Azul (huitztlanpa)
+    2: '#D63031', # Rojo (cihuatlanpa)
+    3: '#7F8C8D'  # Gris (mictlanpa)
+}
 
-# --- TRAZO 6: Generador Activo (Tracer) animado ---
+# Añadir las 20 trazas para los 20 tramos
+for S in range(1, 21):
+    idx_color = (S - 1) % 4
+    color_seg = colores_tramos[idx_color]
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='lines',
+        line=dict(color=color_seg, width=4),
+        opacity=0.8,
+        name=f'Trecena {S}',
+        hoverinfo='skip',
+        showlegend=False
+    ))
+
+# --- TRAZO 27: Generador Activo (Tracer) animado ---
 fig.add_trace(go.Scatter3d(
     x=[X_traj[0]], y=[Y_traj[0]], z=[Z_traj[0]],
     mode='markers+text',
@@ -233,11 +243,35 @@ frames = []
 for k in range(1, len(n_vals)):
     q = k % 13
     r = k % 20
-    frame_data = [
-        go.Scatter3d(x=X_traj[:k], y=Y_traj[:k], z=Z_traj[:k]),
-        go.Scatter3d(x=[X_traj[k-1]], y=[Y_traj[k-1]], z=[Z_traj[k-1]], text=[f"({q},{r})"])
-    ]
-    frame = go.Frame(data=frame_data, traces=[7, 8], name=str(k))
+    
+    # Preparar datos de trazas del frame (trazas 7 a 27)
+    frame_data_traces = []
+    
+    # 20 Segmentos
+    for S in range(1, 21):
+        idx_start = 13 * (S - 1)
+        idx_end = 13 * S
+        
+        if (k - 1) < idx_start:
+            x_seg, y_seg, z_seg = [], [], []
+        elif idx_start <= (k - 1) <= idx_end:
+            x_seg = X_traj[idx_start : k]
+            y_seg = Y_traj[idx_start : k]
+            z_seg = Z_traj[idx_start : k]
+        else:
+            x_seg = X_traj[idx_start : idx_end + 1]
+            y_seg = Y_traj[idx_start : idx_end + 1]
+            z_seg = Z_traj[idx_start : idx_end + 1]
+            
+        frame_data_traces.append(go.Scatter3d(x=list(x_seg), y=list(y_seg), z=list(z_seg)))
+        
+    # Generador Activo
+    frame_data_traces.append(go.Scatter3d(
+        x=[X_traj[k-1]], y=[Y_traj[k-1]], z=[Z_traj[k-1]],
+        text=[f"({q},{r})"]
+    ))
+    
+    frame = go.Frame(data=frame_data_traces, traces=list(range(7, 28)), name=str(k))
     frames.append(frame)
 
 fig.frames = frames
@@ -253,7 +287,7 @@ sliders = [dict(
 
 fig.update_layout(
     title=dict(
-        text='Tonalpohualli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₂₀',
+        text='Tonalpohualli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₂₀ (Trayectoria Multicolor)',
         font=dict(size=18, color='#0F172A', family='Arial'),
         x=0.5, y=0.95
     ),
@@ -306,7 +340,7 @@ html_template = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Tonalpohualli - Modelo Toro Interactivo 3D: Z13 ⊕ Z20</title>
+    <title>Tonalpohualli - Modelo Toro Interactivo 3D: Z13 ⊕ Z20 (Trayectoria Multicolor)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -421,7 +455,7 @@ html_template = """<!DOCTYPE html>
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(0, 0, 0, 0.08);
         }
-        
+
         .control-btn {
             flex: 1;
             background: #2563EB;
@@ -698,7 +732,7 @@ html_template = """<!DOCTYPE html>
                 <button id="btn-numeros" class="selector-btn active" onclick="setRepresentation('numeros')">Números (q, r)</button>
                 <button id="btn-imagenes" class="selector-btn" onclick="setRepresentation('imagenes')">(Numeral, Glifo)</button>
             </div>
-
+ 
             <div class="section-label">Modo de Seguimiento</div>
             <div class="selector-container" style="margin-bottom: 20px;">
                 <button id="btn-seg-cursor" class="selector-btn active" onclick="setFollowMode('cursor')">Al Señalar</button>
@@ -752,7 +786,6 @@ html_template = """<!DOCTYPE html>
     </div>
     
     <script>
-        // Los datos del dataset y etiquetas se inyectan aquí por Python.
         const pointsData = {POINTS_DATA_JSON};
         const textNumeros = {TEXT_NUMEROS_JSON};
         const textImagenes = {TEXT_IMAGENES_JSON};
@@ -765,11 +798,9 @@ html_template = """<!DOCTYPE html>
             if (mode === currentRepresentation) return;
             currentRepresentation = mode;
             
-            // Actualizar botones de la UI
             document.getElementById('btn-numeros').classList.toggle('active', mode === 'numeros');
             document.getElementById('btn-imagenes').classList.toggle('active', mode === 'imagenes');
             
-            // Actualizar etiquetas en el gráfico Plotly
             const plotDiv = document.querySelector('.js-plotly-plot') || document.querySelector('.plotly-graph-div');
             if (plotDiv) {
                 const textArray = mode === 'numeros' ? textNumeros : textImagenes;
@@ -781,7 +812,6 @@ html_template = """<!DOCTYPE html>
                 }, [1, 2, 3, 4, 5, 6]);
             }
             
-            // Refrescar el panel lateral con la nueva visualización si hay un punto seleccionado
             if (hoveredDay !== null) {
                 updateSidebar(hoveredDay);
             }
@@ -791,17 +821,14 @@ html_template = """<!DOCTYPE html>
             if (mode === followMode) return;
             followMode = mode;
             
-            // Actualizar botones de la UI
             document.getElementById('btn-seg-cursor').classList.toggle('active', mode === 'cursor');
             document.getElementById('btn-seg-trayectoria').classList.toggle('active', mode === 'trayectoria');
             
-            // Si cambiamos a trayectoria y hay una animación activa o un slider, 
-            // actualizamos la barra derecha con el valor actual.
             if (mode === 'trayectoria') {
                 const plotDiv = document.querySelector('.js-plotly-plot') || document.querySelector('.plotly-graph-div');
                 if (plotDiv && plotDiv.layout && plotDiv.layout.sliders && plotDiv.layout.sliders[0]) {
                     const activeStep = plotDiv.layout.sliders[0].active || 0;
-                    const day = activeStep + 1; // n = activeStep + 1
+                    const day = activeStep + 1;
                     updateSidebar(day);
                 }
             }
@@ -814,7 +841,6 @@ html_template = """<!DOCTYPE html>
             currentSpeed = parseInt(val);
             document.getElementById('speed-val').innerText = currentSpeed;
             if (isPlaying) {
-                // Para aplicar la velocidad inmediatamente, pausamos y reanudamos
                 pauseAnimation();
                 playAnimation();
             }
@@ -981,7 +1007,7 @@ html_content = html_content.replace("{TEXT_NUMEROS_JSON}", json.dumps(text_numer
 html_content = html_content.replace("{TEXT_IMAGENES_JSON}", json.dumps(text_imagenes_js))
 
 # Guardar a archivo HTML
-with open("toro_animacion_3d_v3.6.html", "w", encoding="utf-8") as f:
+with open("toro_animacion_3d_v4.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("¡toro_animacion_3d_v3.6.html creado exitosamente!")
+print("¡toro_animacion_3d_v4.html creado exitosamente!")
