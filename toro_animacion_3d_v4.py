@@ -287,7 +287,7 @@ sliders = [dict(
 
 fig.update_layout(
     title=dict(
-        text='Tonalpohualli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₂₀ (Trayectoria Multicolor)',
+        text='Tonalpohualli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₂₀ (Versión 4)',
         font=dict(size=18, color='#0F172A', family='Arial'),
         x=0.5, y=0.95
     ),
@@ -340,7 +340,7 @@ html_template = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Tonalpohualli - Modelo Toro Interactivo 3D: Z13 ⊕ Z20 (Trayectoria Multicolor)</title>
+    <title>Tonalpohualli - Modelo Toro Interactivo 3D: Z13 ⊕ Z20 (Versión 4)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -390,16 +390,17 @@ html_template = """<!DOCTYPE html>
             box-shadow: -5px 0 25px rgba(0, 0, 0, 0.03);
             display: flex;
             flex-direction: column;
-            padding: 30px 24px;
+            padding: 20px 18px;
             box-sizing: border-box;
             z-index: 10;
             overflow-y: auto;
+            gap: 12px;
         }
         
         h1 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
-            margin: 0 0 5px 0;
+            margin: 0;
             background: linear-gradient(135deg, #0F172A 0%, #2563EB 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -407,21 +408,21 @@ html_template = """<!DOCTYPE html>
         }
         
         .subtitle {
-            font-size: 13px;
+            font-size: 12px;
             color: #64748B;
             text-align: center;
-            margin-bottom: 25px;
+            margin: 0;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
         .section-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: #64748B;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             text-align: left;
             padding-left: 4px;
         }
@@ -430,9 +431,9 @@ html_template = """<!DOCTYPE html>
         .selector-container {
             background: rgba(0, 0, 0, 0.03);
             border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
-            padding: 4px;
+            padding: 3px;
         }
         
         .selector-btn {
@@ -440,13 +441,16 @@ html_template = """<!DOCTYPE html>
             background: none;
             border: none;
             color: #64748B;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 6px 4px;
+            border-radius: 6px;
             font-family: 'Outfit', sans-serif;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .selector-btn.active {
@@ -461,10 +465,10 @@ html_template = """<!DOCTYPE html>
             background: #2563EB;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: 8px;
             font-family: 'Outfit', sans-serif;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -486,40 +490,14 @@ html_template = """<!DOCTYPE html>
             box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
         }
         
-        .selector-btn-vertical {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            color: #64748B;
-            padding: 10px;
-            border-radius: 8px;
-            font-family: 'Outfit', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .selector-btn-vertical:hover {
-            background: rgba(0, 0, 0, 0.04);
-            color: #0F172A;
-        }
-        
-        .selector-btn-vertical.active {
-            background: #FFFFFF;
-            color: #2563EB;
-            border-color: rgba(37, 99, 235, 0.2);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        
         /* Details Card */
         #details-card {
             background: rgba(0, 0, 0, 0.01);
             border: 1px solid rgba(0, 0, 0, 0.05);
-            border-radius: 16px;
-            padding: 24px;
-            flex-grow: 1;
+            border-radius: 14px;
+            padding: 14px;
+            width: 100%;
+            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -528,49 +506,52 @@ html_template = """<!DOCTYPE html>
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            min-height: 180px;
         }
         
         #details-card.active {
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.85);
             border-color: rgba(37, 99, 235, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
         }
         
         .card-bg-glow {
             position: absolute;
-            width: 150px;
-            height: 150px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, rgba(37, 99, 235, 0) 70%);
-            top: -50px;
-            right: -50px;
+            top: -40px;
+            right: -40px;
             z-index: 1;
             pointer-events: none;
         }
         
         .placeholder-text {
             color: #64748B;
-            font-size: 14px;
-            line-height: 1.6;
+            font-size: 12px;
+            line-height: 1.5;
+            padding: 10px;
         }
         
         .day-badge {
-            font-size: 32px;
+            font-size: 24px;
             font-weight: 800;
             color: #0F172A;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
             z-index: 2;
         }
         
         .class-badge {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 25px;
+            margin-bottom: 12px;
             z-index: 2;
+            display: inline-block;
         }
         
         /* Categories styling */
@@ -579,7 +560,7 @@ html_template = """<!DOCTYPE html>
         }
         .class-tlahuiztlanpa {
             background: rgba(241, 196, 15, 0.15);
-            color: #B7950B;
+            color: #9A7D0A;
             border: 1px solid rgba(241, 196, 15, 0.3);
         }
         .class-huitztlanpa {
@@ -611,15 +592,15 @@ html_template = """<!DOCTYPE html>
         /* Numerical visualization style */
         .visual-numeros {
             display: flex;
-            gap: 20px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 5px;
             z-index: 2;
         }
         
         .number-box {
-            width: 115px;
-            height: 115px;
-            border-radius: 16px;
+            width: 85px;
+            height: 85px;
+            border-radius: 12px;
             background: rgba(0, 0, 0, 0.02);
             border: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
@@ -630,15 +611,15 @@ html_template = """<!DOCTYPE html>
         }
         
         .number-box .val {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 800;
         }
         
         .number-box .label {
-            font-size: 12px;
+            font-size: 10px;
             color: #64748B;
             text-transform: uppercase;
-            margin-top: 5px;
+            margin-top: 3px;
         }
         
         /* Image visualization style */
@@ -646,14 +627,14 @@ html_template = """<!DOCTYPE html>
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
             width: 100%;
             z-index: 2;
         }
         
         .image-row {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             justify-content: center;
             align-items: center;
         }
@@ -662,26 +643,26 @@ html_template = """<!DOCTYPE html>
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
         }
         
         .img-wrapper {
-            width: 115px;
-            height: 115px;
-            border-radius: 16px;
+            width: 90px;
+            height: 90px;
+            border-radius: 12px;
             background: rgba(0, 0, 0, 0.02);
             border: 1px solid rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 8px;
             box-sizing: border-box;
             box-shadow: 0 4px 15px rgba(0,0,0,0.01);
             transition: transform 0.3s ease;
         }
         
         .img-wrapper:hover {
-            transform: scale(1.08);
+            transform: scale(1.06);
         }
         
         .img-wrapper img {
@@ -691,16 +672,16 @@ html_template = """<!DOCTYPE html>
         }
         
         .image-card .label {
-            font-size: 13px;
+            font-size: 11px;
             color: #475569;
             font-weight: 600;
         }
         
         .traditional-name {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 800;
             color: #0F172A;
-            margin-top: 15px;
+            margin-top: 5px;
             text-transform: capitalize;
             background: linear-gradient(135deg, #0F172A 0%, #2563EB 100%);
             -webkit-background-clip: text;
@@ -709,11 +690,13 @@ html_template = """<!DOCTYPE html>
         
         /* Help footer */
         .footer-help {
-            font-size: 11px;
+            font-size: 10px;
             color: #64748B;
             text-align: center;
-            margin-top: 25px;
-            line-height: 1.5;
+            margin-top: auto;
+            padding-top: 10px;
+            line-height: 1.4;
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
         }
     </style>
 </head>
@@ -723,64 +706,74 @@ html_template = """<!DOCTYPE html>
             {PLOTLY_DIV}
         </div>
         <div id="sidebar">
-            <h1 style="margin-bottom: 2px;">Tonalpohualli</h1>
-            <h1 style="margin-top: 2px; margin-bottom: 5px;">Toro Interactivo 3D</h1>
-            <div class="subtitle">Modelo Z₁₃ ⊕ Z₂₀</div>
+            <h1 style="margin-bottom: 2px;">Tonalpohualli 3D</h1>
+            <div class="subtitle">Modelo Z₁₃ ⊕ Z₂₀ • Versión 4</div>
             
-            <div class="section-label" style="margin-top: 5px;">Representación</div>
-            <div class="selector-container" style="margin-bottom: 15px;">
-                <button id="btn-numeros" class="selector-btn active" onclick="setRepresentation('numeros')">Números (q, r)</button>
-                <button id="btn-imagenes" class="selector-btn" onclick="setRepresentation('imagenes')">(Numeral, Glifo)</button>
-            </div>
- 
-            <div class="section-label">Modo de Seguimiento</div>
-            <div class="selector-container" style="margin-bottom: 20px;">
-                <button id="btn-seg-cursor" class="selector-btn active" onclick="setFollowMode('cursor')">Al Señalar</button>
-                <button id="btn-seg-trayectoria" class="selector-btn" onclick="setFollowMode('trayectoria')">Al Animar</button>
-            </div>
-
-            <div class="section-label">Controles de Animación</div>
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <button id="btn-play" class="control-btn" onclick="playAnimation()">► Play</button>
-                <button id="btn-pause" class="control-btn" onclick="pauseAnimation()">⏸ Pause</button>
-            </div>
-
-            <div class="section-label">Velocidad de Animación</div>
-            <div style="background: rgba(0, 0, 0, 0.03); border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 12px; padding: 12px; margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span style="font-size: 12px; color: #475569; font-weight: 600;">Intervalo:</span>
-                    <span style="font-size: 12px; color: #2563EB; font-weight: 800;"><span id="speed-val">300</span> ms</span>
-                </div>
-                <input type="range" id="speed-slider" min="100" max="1500" step="50" value="300" oninput="updateSpeed(this.value)" style="width: 100%; cursor: pointer;">
-                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #94A3B8; margin-top: 4px;">
-                    <span>Rápido (100ms)</span>
-                    <span>Lento (1500ms)</span>
-                </div>
-            </div>
-
-            <div class="section-label">Visualización de Coordenadas</div>
-            <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px;">
-                <button id="btn-lbl-hide" class="selector-btn-vertical active" onclick="setLabelMode('hide')">Ocultar Coordenadas</button>
-                <button id="btn-lbl-featured" class="selector-btn-vertical" onclick="setLabelMode('featured')">Mostrar Solo Destacados</button>
-                <button id="btn-lbl-all" class="selector-btn-vertical" onclick="setLabelMode('all')">Mostrar Todas las Coordenadas</button>
-            </div>
-            
+            <!-- Details Card at the Top -->
             <div id="details-card">
                 <div class="card-bg-glow"></div>
                 <div id="details-content" class="placeholder-text">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 15px;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 10px;">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
                     </svg>
                     <br>
-                    Pasa el cursor o haz clic sobre cualquier punto en el toro 3D para explorar su coordenada, día y glifo tradicional.
+                    Pasa el cursor o haz clic en cualquier punto del toro 3D para ver su coordenada, número y glifo tradicional.
+                </div>
+            </div>
+
+            <!-- Representation and Follow Mode side-by-side -->
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1; min-width: 0;">
+                    <div class="section-label">Representación</div>
+                    <div class="selector-container">
+                        <button id="btn-numeros" class="selector-btn active" onclick="setRepresentation('numeros')" title="Números (q, r)">Números</button>
+                        <button id="btn-imagenes" class="selector-btn" onclick="setRepresentation('imagenes')" title="Numeral, Glifo">Glifos</button>
+                    </div>
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                    <div class="section-label">Seguimiento</div>
+                    <div class="selector-container">
+                        <button id="btn-seg-cursor" class="selector-btn active" onclick="setFollowMode('cursor')" title="Al Señalar">Al Señalar</button>
+                        <button id="btn-seg-trayectoria" class="selector-btn" onclick="setFollowMode('trayectoria')" title="Al Animar">Al Animar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animation Controls and Speed side-by-side in one row -->
+            <div>
+                <div class="section-label">Controles de Animación</div>
+                <div style="display: flex; align-items: center; gap: 12px; background: rgba(0, 0, 0, 0.02); border: 1px solid rgba(0, 0, 0, 0.05); border-radius: 10px; padding: 8px;">
+                    <!-- Play/Pause Buttons -->
+                    <div style="display: flex; gap: 4px; flex-shrink: 0; width: 110px;">
+                        <button id="btn-play" class="control-btn" style="padding: 6px;" onclick="playAnimation()">► Play</button>
+                        <button id="btn-pause" class="control-btn" style="padding: 6px; background: #64748B;" onclick="pauseAnimation()">⏸ Pause</button>
+                    </div>
+                    <!-- Speed Slider -->
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                            <span style="font-size: 9px; color: #64748B; font-weight: 600;">Intervalo:</span>
+                            <span style="font-size: 10px; color: #2563EB; font-weight: 800;"><span id="speed-val">300</span> ms</span>
+                        </div>
+                        <input type="range" id="speed-slider" min="100" max="1500" step="50" value="300" oninput="updateSpeed(this.value)" style="width: 100%; cursor: pointer; margin: 0; height: 4px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coordinate visibility as horizontal 3-button toggle -->
+            <div>
+                <div class="section-label">Coordenadas en el Toro</div>
+                <div class="selector-container">
+                    <button id="btn-lbl-hide" class="selector-btn active" onclick="setLabelMode('hide')">Ocultar</button>
+                    <button id="btn-lbl-featured" class="selector-btn" onclick="setLabelMode('featured')">Destacadas</button>
+                    <button id="btn-lbl-all" class="selector-btn" onclick="setLabelMode('all')">Todas</button>
                 </div>
             </div>
             
             <div class="footer-help">
-                Gira el Toro con el mouse para explorarlo en 3D.<br>
-                Usa los controles del panel lateral para reproducir la animación.
+                Gira el Toro con el mouse para explorar en 3D.<br>
+                Usa el panel para configurar y reproducir la animación.
             </div>
         </div>
     </div>

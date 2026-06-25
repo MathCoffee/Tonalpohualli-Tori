@@ -4,14 +4,14 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
 
-print("Generando Animación 3D v5 con estructura Z13 x Z4...")
+print("Generando Animación 3D v5.1 (Variante con r=1 y r=0 intercambiados)...")
 
-# Mapeo fijo de imágenes de símbolos según r (1, 2, 3, 0)
+# Mapeo fijo de imágenes de símbolos según r (1: Conejo, 2: Pedernal, 3: Casa, 0: Carrizo)
 simbolos_info = {
-    1: {"name": "carrizo", "file": "13 - carrizo.png"},
+    1: {"name": "conejo", "file": "8 - conejo.png"},
     2: {"name": "pedernal", "file": "18 - pedernal.png"},
     3: {"name": "casa", "file": "3 - casa.png"},
-    0: {"name": "conejo", "file": "8 - conejo.png"}
+    0: {"name": "carrizo", "file": "13 - carrizo.png"}
 }
 
 # 2. Parámetros del Toro
@@ -63,12 +63,12 @@ categorías = {
     'familia_q_1': {
         'x': [], 'y': [], 'z': [], 'n': [],
         'text_num': [], 'text_img': [], 'hover': [],
-        'color': '#00CEC9', 'symbol': 'circle', 'size': 8, 'name': 'Año en Círculo Principal (r=1, Carrizo)'
+        'color': '#00CEC9', 'symbol': 'circle', 'size': 8, 'name': 'Año en Círculo Principal (r=0, Carrizo)'
     },
     'tlahuiztlanpa': {
         'x': [], 'y': [], 'z': [], 'n': [],
         'text_num': [], 'text_img': [], 'hover': [],
-        'color': '#F1C40F', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de años (r=1, Carrizo)'
+        'color': '#F1C40F', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de años (r=0, Carrizo)'
     },
     'huitztlanpa': {
         'x': [], 'y': [], 'z': [], 'n': [],
@@ -83,7 +83,7 @@ categorías = {
     'mictlanpa': {
         'x': [], 'y': [], 'z': [], 'n': [],
         'text_num': [], 'text_img': [], 'hover': [],
-        'color': '#7F8C8D', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de años (r=0, Conejo)'
+        'color': '#7F8C8D', 'symbol': 'diamond', 'size': 11, 'name': 'Inicio de años (r=1, Conejo)'
     }
 }
 
@@ -104,21 +104,21 @@ for n in range(1, 53):
     hover_info = f"Año n: <b>{n}</b><br>Coordenadas: <b>({q}, {r})</b>"
     
     if q == 1:
-        if r == 1:
+        if r == 0:
             class_key = 'tlahuiztlanpa'
-            class_name = 'Inicio de años (r=1, Carrizo)'
+            class_name = 'Inicio de años (r=0, Carrizo)'
         elif r == 2:
             class_key = 'huitztlanpa'
             class_name = 'Inicio de años (r=2, Pedernal)'
         elif r == 3:
             class_key = 'cihuatlanpa'
             class_name = 'Inicio de años (r=3, Casa)'
-        else:
+        else: # r == 1
             class_key = 'mictlanpa'
-            class_name = 'Inicio de años (r=0, Conejo)'
-    elif r == 1:
+            class_name = 'Inicio de años (r=1, Conejo)'
+    elif r == 0:
         class_key = 'familia_q_1'
-        class_name = 'Año en Círculo Principal (r=1, Carrizo)'
+        class_name = 'Año en Círculo Principal (r=0, Carrizo)'
     else:
         class_key = 'base'
         class_name = 'Año Regular'
@@ -166,11 +166,16 @@ for cat_key in trace_keys:
     ))
 
 # --- TRAZOS 7 a 10: 4 Tramos de trayectoria de ciclos (Multicolor) ---
+# En v5.1, los ciclos empiezan en:
+# Ciclo 1 (n=1) -> r=1 (Gris, Conejo)
+# Ciclo 2 (n=14) -> r=2 (Azul, Pedernal)
+# Ciclo 3 (n=27) -> r=3 (Rojo, Casa)
+# Ciclo 4 (n=40) -> r=0 (Amarillo, Carrizo)
 colores_tramos = {
-    0: '#F1C40F', # Amarillo (r=1)
+    0: '#7F8C8D', # Gris (r=1)
     1: '#0984E3', # Azul (r=2)
     2: '#D63031', # Rojo (r=3)
-    3: '#7F8C8D'  # Gris (r=0)
+    3: '#F1C40F'  # Amarillo (r=0)
 }
 
 # Añadir las 4 trazas para los 4 tramos
@@ -252,7 +257,7 @@ sliders = [dict(
 
 fig.update_layout(
     title=dict(
-        text='Xiuhmolpilli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₄ (Versión 5)',
+        text='Xiuhmolpilli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₄ (Versión 5.1)',
         font=dict(size=18, color='#0F172A', family='Arial'),
         x=0.5, y=0.95
     ),
@@ -305,7 +310,7 @@ html_template = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Xiuhmolpilli - Modelo Toro Interactivo 3D: Z13 ⊕ Z4 (Versión 5)</title>
+    <title>Xiuhmolpilli - Modelo Toro Interactivo 3D: Z13 ⊕ Z4 (Versión 5.1)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -672,7 +677,7 @@ html_template = """<!DOCTYPE html>
         </div>
         <div id="sidebar">
             <h1 style="margin-bottom: 2px;">Xiuhmolpilli 3D</h1>
-            <div class="subtitle">Modelo Z₁₃ ⊕ Z₄ • Versión 5</div>
+            <div class="subtitle">Modelo Z₁₃ ⊕ Z₄ • Versión 5.1</div>
             
             <!-- Details Card at the Top -->
             <div id="details-card">
@@ -786,7 +791,9 @@ html_template = """<!DOCTYPE html>
                 const plotDiv = document.querySelector('.js-plotly-plot') || document.querySelector('.plotly-graph-div');
                 if (plotDiv && plotDiv.layout && plotDiv.layout.sliders && plotDiv.layout.sliders[0]) {
                     const activeStep = plotDiv.layout.sliders[0].active || 0;
-                    const day = activeStep + 1;
+                    const steps = plotDiv.layout.sliders[0].steps;
+                    const step = steps && steps[activeStep];
+                    const day = step && step.label ? parseInt(step.label) : (activeStep + 1);
                     updateSidebar(day);
                 }
             }
@@ -964,7 +971,8 @@ html_content = html_content.replace("{TEXT_NUMEROS_JSON}", json.dumps(text_numer
 html_content = html_content.replace("{TEXT_IMAGENES_JSON}", json.dumps(text_imagenes_js))
 
 # Guardar a archivo HTML
-with open("toro_animacion_3d_v5.html", "w", encoding="utf-8") as f:
+output_filename = "toro_animacion_3d_v5.1.html"
+with open(output_filename, "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("¡toro_animacion_3d_v5.html creado exitosamente!")
+print(f"¡{output_filename} creado exitosamente!")

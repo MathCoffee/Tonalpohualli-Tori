@@ -4,7 +4,7 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.io as pio
 
-print("Generando Animación 3D v5 con estructura Z13 x Z4...")
+print("Generando Animación 3D v6 con inversión (4 círculos verticales de 13 puntos)...")
 
 # Mapeo fijo de imágenes de símbolos según r (1, 2, 3, 0)
 simbolos_info = {
@@ -21,8 +21,10 @@ r_minor_surf = 1.42
 r_minor_tracer = 1.58
 
 def mapear(x_mod, y_mod, r_val=r_minor):
-    v_ang = 2 * np.pi * (x_mod / 13.0)
-    u_ang = 2 * np.pi * (y_mod / 4.0)
+    # Inversión: x_mod (mod 13, q) es poloidal (círculo menor vertical)
+    # y_mod (mod 4, r) es toroidal (círculo mayor horizontal)
+    v_ang = 2 * np.pi * (y_mod / 4.0)
+    u_ang = 2 * np.pi * (x_mod / 13.0)
     X = (R_major + r_val * np.cos(u_ang)) * np.cos(v_ang)
     Y = (R_major + r_val * np.cos(u_ang)) * np.sin(v_ang)
     Z = r_val * np.sin(u_ang)
@@ -252,7 +254,7 @@ sliders = [dict(
 
 fig.update_layout(
     title=dict(
-        text='Xiuhmolpilli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₄ (Versión 5)',
+        text='Xiuhmolpilli - Modelo Toro Interactivo 3D: Z₁₃ ⊕ Z₄ (Versión 6)',
         font=dict(size=18, color='#0F172A', family='Arial'),
         x=0.5, y=0.95
     ),
@@ -305,7 +307,7 @@ html_template = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Xiuhmolpilli - Modelo Toro Interactivo 3D: Z13 ⊕ Z4 (Versión 5)</title>
+    <title>Xiuhmolpilli - Modelo Toro Interactivo 3D: Z13 ⊕ Z4 (Versión 6)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -672,7 +674,7 @@ html_template = """<!DOCTYPE html>
         </div>
         <div id="sidebar">
             <h1 style="margin-bottom: 2px;">Xiuhmolpilli 3D</h1>
-            <div class="subtitle">Modelo Z₁₃ ⊕ Z₄ • Versión 5</div>
+            <div class="subtitle">Modelo Z₁₃ ⊕ Z₄ • Versión 6</div>
             
             <!-- Details Card at the Top -->
             <div id="details-card">
@@ -786,7 +788,9 @@ html_template = """<!DOCTYPE html>
                 const plotDiv = document.querySelector('.js-plotly-plot') || document.querySelector('.plotly-graph-div');
                 if (plotDiv && plotDiv.layout && plotDiv.layout.sliders && plotDiv.layout.sliders[0]) {
                     const activeStep = plotDiv.layout.sliders[0].active || 0;
-                    const day = activeStep + 1;
+                    const steps = plotDiv.layout.sliders[0].steps;
+                    const step = steps && steps[activeStep];
+                    const day = step && step.label ? parseInt(step.label) : (activeStep + 1);
                     updateSidebar(day);
                 }
             }
@@ -964,7 +968,7 @@ html_content = html_content.replace("{TEXT_NUMEROS_JSON}", json.dumps(text_numer
 html_content = html_content.replace("{TEXT_IMAGENES_JSON}", json.dumps(text_imagenes_js))
 
 # Guardar a archivo HTML
-with open("toro_animacion_3d_v5.html", "w", encoding="utf-8") as f:
+with open("toro_animacion_3d_v6.html", "w", encoding="utf-8") as f:
     f.write(html_content)
 
-print("¡toro_animacion_3d_v5.html creado exitosamente!")
+print("¡toro_animacion_3d_v6.html creado exitosamente!")
